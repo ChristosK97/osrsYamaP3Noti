@@ -30,7 +30,7 @@ public class YamaOverlay extends Overlay
             graphics.setColor(Color.RED);
             graphics.fillRect(10, 10, 200, 50);
             graphics.setColor(Color.WHITE);
-            graphics.drawString("⚠️ Yama below 32% HP!", 20, 40);
+            graphics.drawString("⚠️ Yama below 32% HP! P3 Next", 20, 40);
         }
         return null;
     }
