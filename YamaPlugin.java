@@ -1,23 +1,36 @@
+package net.runelite.client.plugins.yamaalert;
+
+import net.runelite.api.Client;
+import net.runelite.api.NPC;
+import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.events.NpcDespawned;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
+
+import javax.inject.Inject;
+
 @PluginDescriptor(name = "Yama Alert")
 public class YamaPlugin extends Plugin
 {
     @Inject private Client client;
     @Inject private OverlayManager overlayManager;
-    @Inject private YamaPhaseOverlay overlay;
+    @Inject private YamaOverlay overlay;
 
-    private static final int YAMA_NPC_ID = 12345; // Replace with Yama's actual NPC ID
+    private static final int YAMA_PHASE3_NPC_ID = 14176;
     private static final double HEALTH_THRESHOLD = 0.32;
 
     private NPC yamaNpc;
 
     @Override
-    protected void startUp() throws Exception
+    protected void startUp()
     {
         overlayManager.add(overlay);
     }
 
     @Override
-    protected void shutDown() throws Exception
+    protected void shutDown()
     {
         overlayManager.remove(overlay);
         yamaNpc = null;
@@ -27,7 +40,7 @@ public class YamaPlugin extends Plugin
     public void onNpcSpawned(NpcSpawned event)
     {
         NPC npc = event.getNpc();
-        if (npc.getId() == YAMA_NPC_ID)
+        if (npc.getId() == YAMA_PHASE3_NPC_ID)
         {
             yamaNpc = npc;
         }
@@ -42,20 +55,16 @@ public class YamaPlugin extends Plugin
         }
     }
 
-    public boolean isPhaseThree()
-    {
-        // Replace with actual phase detection logic
-        return yamaNpc != null && yamaNpc.getHealthRatio() > 0; // Placeholder
-    }
-
-    public boolean isHealthBelowThreshold()
+    public boolean isYamaBelowThreshold()
     {
         if (yamaNpc == null) return false;
+
         int health = yamaNpc.getHealthRatio();
-        int maxHealth = yamaNpc.getHealthScale(); // May need to calibrate this
+        int maxHealth = yamaNpc.getHealthScale(); 
+
         if (health <= 0 || maxHealth <= 0) return false;
 
-        double percent = (double) health / maxHealth;
-        return percent <= HEALTH_THRESHOLD;
+        double hpPercent = (double) health / maxHealth;
+        return hpPercent <= HEALTH_THRESHOLD;
     }
 }
